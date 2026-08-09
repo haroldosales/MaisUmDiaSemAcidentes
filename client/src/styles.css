@@ -88,9 +88,27 @@ h1 {
 }
 
 .day-icon {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-left: 0.5rem;
   animation: shout 0.9s ease-in-out infinite;
+}
+
+.day-icon img,
+.screen-alert-icon img {
+  display: block;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.screen-alert-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
 }
 
 @keyframes shout {
@@ -188,8 +206,7 @@ h1 {
 }
 
 .screen-alert-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
+
   animation: shout 0.8s ease-in-out infinite;
 }
 

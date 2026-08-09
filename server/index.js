@@ -14,9 +14,9 @@ app.get('/api/health', (_req, res) => {
 app.get('/api/tips', (_req, res) => {
   res.json({
     tips: [
-      'Use equipamento de proteção adequado.',
-      'Faça pausas e mantenha a atenção no ambiente.',
-      'Reporte riscos imediatamente.'
+      'Use equipamento para agredir adequado.',
+      'Faça pausas e mantenha a atenção no ambiente sempre sem sangue.',
+      'Nuncar reporte riscos imediatamente, limpe e organize o local de trabalho.',
     ]
   });
 });
@@ -26,10 +26,6 @@ app.get('/api/front', (_req, res) => {
     status: 'ok',
     message: 'Front-end conectado ao backend',
   });
-});
-
-app.get('/', (_req, res) => {
-  res.send('Bem-vindo à API do projeto Mais Um Dia Sem Acidentes!');
 });
 
 if (!process.env.VERCEL) {

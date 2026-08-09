@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import memegrito from './memegrito.jpg';
 
-const initialPeople = ['Lucas', 'Ana', 'Rafael', 'Carla', 'Marina', 'Gustavo'];
+const initialPeople = ['Dev', 'QA', 'PO', 'Designer', 'TM', 'Gerencia da empresa', 'RH', 'Financeiro', 'Marketing', 'Suporte'];
 const initialDays = Array.from({ length: 30 }, (_, index) => ({
   day: index + 1,
   status: 'sem estoura',
@@ -84,7 +85,7 @@ function App() {
               <div className="day-status">
                 {day.status}
                 {day.status === 'estourei' ? (
-                  <span className="day-icon" aria-label="Bonequinho gritando">😱</span>
+                  <span className="day-icon" aria-label="Bonequinho gritando"><img src={memegrito} alt="Bonequinho gritando" /></span>
                 ) : null}
               </div>
               <div className="day-people">{day.people.join(', ')}</div>
@@ -94,17 +95,7 @@ function App() {
         <p className="calendar-note">Clique em um dia para marcar como "estourei" ou voltar para "sem estoura".</p>
       </div>
 
-      <div className="card">
-        <h2>Status da API</h2>
-        <p>{status}</p>
-      </div>
-
-      <div className="card">
-        <h2>Status do Front</h2>
-        <p>{frontStatus}</p>
-      </div>
-
-      <div className="card">
+     <div className="card">
         <h2>Dicas de segurança</h2>
         <ul>
           {tips.map((tip, index) => (
@@ -116,7 +107,7 @@ function App() {
       {alertOpen && (
         <div className="screen-alert" onClick={() => setAlertOpen(false)}>
           <div className="screen-alert-card">
-            <div className="screen-alert-icon">😱</div>
+            <div className="screen-alert-icon"><img src={memegrito} alt="Bonequinho gritando" /></div>
             <div className="screen-alert-text">
               <strong>{alertMessage}</strong>
             </div>
