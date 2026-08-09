@@ -111,6 +111,60 @@ h1 {
   font-size: 0.95rem;
 }
 
+@media (max-width: 900px) {
+  .app {
+    padding: 2rem 1rem;
+  }
+
+  .summary-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .app {
+    padding: 1.5rem 0.8rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .calendar-day {
+    padding: 0.9rem;
+  }
+
+  .day-number {
+    font-size: 1rem;
+  }
+
+  .day-status {
+    font-size: 0.88rem;
+  }
+
+  .day-people {
+    font-size: 0.8rem;
+  }
+
+  .screen-alert-card {
+    padding: 1.5rem;
+  }
+
+  .screen-alert-text {
+    font-size: 1.2rem;
+  }
+}
+
 .screen-alert {
   position: fixed;
   inset: 0;
