@@ -32,6 +32,10 @@ app.get('/', (_req, res) => {
   res.send('Bem-vindo à API do projeto Mais Um Dia Sem Acidentes!');
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+  });
+}
+
+export default app;
