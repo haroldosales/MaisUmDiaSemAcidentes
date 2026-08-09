@@ -1,46 +1,11 @@
 import { useEffect, useState } from 'react';
-import memegrito from './memegrito.jpg';
 
-const SAFE_STATUS = 'sem acidente';
-const INCIDENT_STATUS = 'acidente';
-const initialPeople = ['Dev', 'QA', 'PO', 'Designer', 'TM', 'Gerencia da empresa', 'RH', 'Financeiro', 'Marketing', 'Suporte'];
-
-function createInitialDays(count = 1) {
-  const days = [];
-
-  for (let index = 0; index < count; index += 1) {
-    days.push({
-      day: index + 1,
-      status: index === 0 ? SAFE_STATUS : days[index - 1].status,
-      people: [initialPeople[index % initialPeople.length], initialPeople[(index + 1) % initialPeople.length]],
-    });
-  }
-
-  return days;
-}
-
-function loadStoredDays() {
-  if (typeof window === 'undefined') {
-    return createInitialDays();
-  }
-
-  try {
-    const storedDays = window.localStorage.getItem('mais-um-dia-status');
-
-    if (!storedDays) {
-      return createInitialDays();
-    }
-
-    const parsedDays = JSON.parse(storedDays);
-    if (Array.isArray(parsedDays) && parsedDays.length > 0) {
-      return parsedDays;
-    }
-  } catch (error) {
-    console.error('Não foi possível carregar os dias salvos', error);
-  }
-
-  return createInitialDays();
-}
+const initialPeople = ['Lucas', 'Ana', 'Rafael', 'Carla', 'Marina', 'Gustavo'];
+const initialDays = Array.from({ length: 30 }, (_, index) => ({
+  day: index + 1,
+  status: 'sem estoura',
+  people: [initialPeople[index % initialPeople.length], initialPeople[(index + 1) % initialPeople.length]],
+}));
 
 function App() {
   const [tips, setTips] = useState([]);
@@ -148,23 +113,28 @@ function App() {
               <div className="day-number">{day.day}</div>
               <div className="day-status">
                 {day.status}
-                {day.status === INCIDENT_STATUS ? (
-                  <span className="day-icon" aria-label="Bonequinho gritando"><img src={memegrito} alt="Bonequinho gritando" /></span>
+                {day.status === 'estourei' ? (
+                  <span className="day-icon" aria-label="Bonequinho gritando">😱</span>
                 ) : null}
               </div>
               <div className="day-people">{day.people.join(', ')}</div>
             </button>
           ))}
         </div>
-       <div className="calendar-actions">
-         <button type="button" className="advance-button" onClick={advanceDay}>
-           Avançar para o dia {days.length + 1}
-         </button>
-         <p className="calendar-note">Clique no dia atual para marcar como acidente ou sem acidente. Em seguida, avance para registrar o próximo dia.</p>
-       </div>
+        <p className="calendar-note">Clique em um dia para marcar como "estourei" ou voltar para "sem estoura".</p>
       </div>
 
-     <div className="card">
+      <div className="card">
+        <h2>Status da API</h2>
+        <p>{status}</p>
+      </div>
+
+      <div className="card">
+        <h2>Status do Front</h2>
+        <p>{frontStatus}</p>
+      </div>
+
+      <div className="card">
         <h2>Dicas de segurança</h2>
         <ul>
           {tips.map((tip, index) => (
