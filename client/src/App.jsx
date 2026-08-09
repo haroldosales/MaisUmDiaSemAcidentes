@@ -10,6 +10,7 @@ const initialDays = Array.from({ length: 30 }, (_, index) => ({
 function App() {
   const [tips, setTips] = useState([]);
   const [status, setStatus] = useState('Verificando API...');
+  const [frontStatus, setFrontStatus] = useState('Verificando front...');
   const [days, setDays] = useState(initialDays);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertOpen, setAlertOpen] = useState(false);
@@ -24,6 +25,11 @@ function App() {
       .then((res) => res.json())
       .then((data) => setTips(data.tips))
       .catch(() => setStatus('API indisponível'));
+
+    fetch('/api/front')
+      .then((res) => res.json())
+      .then((data) => setFrontStatus(data.message))
+      .catch(() => setFrontStatus('Front não conectado'));
   }, []);
 
   const safeCount = days.filter((day) => day.status === 'sem estoura').length;
@@ -91,6 +97,11 @@ function App() {
       <div className="card">
         <h2>Status da API</h2>
         <p>{status}</p>
+      </div>
+
+      <div className="card">
+        <h2>Status do Front</h2>
+        <p>{frontStatus}</p>
       </div>
 
       <div className="card">

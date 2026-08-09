@@ -21,9 +21,16 @@ app.get('/api/tips', (_req, res) => {
   });
 });
 
+app.get('/api/front', (_req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'Front-end conectado ao backend',
+  });
+});
+
 app.get('/', (_req, res) => {
   res.send('Bem-vindo à API do projeto Mais Um Dia Sem Acidentes!');
-}); 
+});
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
