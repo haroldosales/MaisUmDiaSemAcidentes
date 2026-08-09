@@ -1,20 +1,75 @@
 import { useEffect, useState } from 'react';
 import memegrito from './memegrito.jpg';
 
+const SAFE_STATUS = 'sem acidente';
+const INCIDENT_STATUS = 'acidente';
 const initialPeople = ['Dev', 'QA', 'PO', 'Designer', 'TM', 'Gerencia da empresa', 'RH', 'Financeiro', 'Marketing', 'Suporte'];
-const initialDays = Array.from({ length: 30 }, (_, index) => ({
-  day: index + 1,
-  status: 'sem estoura',
-  people: [initialPeople[index % initialPeople.length], initialPeople[(index + 1) % initialPeople.length]],
-}));
+
+function createInitialDays(count = 1) {
+  const days = [];
+
+  for (let index = 0; index < count; index += 1) {
+    days.push({
+      day: index + 1,
+      status: index === 0 ? SAFE_STATUS : days[index - 1].status,
+      people: [initialPeople[index % initialPeople.length], initialPeople[(index + 1) % initialPeople.length]],
+    });
+  }
+
+  return days;
+}
+
+function loadStoredDays() {
+  if (typeof window === 'undefined') {
+    return createInitialDays();
+  }
+
+  try {
+    const storedDays = window.localStorage.getItem('mais-um-dia-status');
+
+    if (!storedDays) {
+      return createInitialDays();
+    }
+
+    const parsedDays = JSON.parse(storedDays);
+    if (Array.isArray(parsedDays) && parsedDays.length > 0) {
+      return parsedDays;
+    }
+  } catch (error) {
+    console.error('Não foi possível carregar os dias salvos', error);
+  }
+
+  return createInitialDays();
+}
 
 function App() {
   const [tips, setTips] = useState([]);
   const [status, setStatus] = useState('Verificando API...');
   const [frontStatus, setFrontStatus] = useState('Verificando front...');
-  const [days, setDays] = useState(initialDays);
+  const [days, setDays] = useState(() => loadStoredDays());
   const [alertMessage, setAlertMessage] = useState('');
   const [alertOpen, setAlertOpen] = useState(false);
+
+  const currentDayIndex = days.length - 1;
+
+  function advanceDay() {
+    setDays((currentDays) => {
+      const nextIndex = currentDays.length;
+      const previousDay = currentDays[currentDays.length - 1] ?? { status: SAFE_STATUS };
+
+      return [
+        ...currentDays,
+        {
+          day: nextIndex + 1,
+          status: SAFE_STATUS,
+          people: [
+            initialPeople[nextIndex % initialPeople.length],
+            initialPeople[(nextIndex + 1) % initialPeople.length],
+          ],
+        },
+      ];
+    });
+  }
 
   useEffect(() => {
     fetch('/api/health')
@@ -33,16 +88,24 @@ function App() {
       .catch(() => setFrontStatus('Front não conectado'));
   }, []);
 
-  const safeCount = days.filter((day) => day.status === 'sem estoura').length;
-  const incidentCount = days.filter((day) => day.status === 'estourei').length;
+  useEffect(() => {
+    window.localStorage.setItem('mais-um-dia-status', JSON.stringify(days));
+  }, [days]);
+
+  const safeCount = days.filter((day) => day.status === SAFE_STATUS).length;
+  const incidentCount = days.filter((day) => day.status === INCIDENT_STATUS).length;
 
   function toggleStatus(dayIndex) {
+    if (dayIndex !== days.length - 1) {
+      return;
+    }
+
     setDays((currentDays) =>
       currentDays.map((day, index) => {
         if (index !== dayIndex) return day;
 
-        const nextStatus = day.status === 'sem estoura' ? 'estourei' : 'sem estoura';
-        if (nextStatus === 'estourei') {
+        const nextStatus = day.status === SAFE_STATUS ? INCIDENT_STATUS : SAFE_STATUS;
+        if (nextStatus === INCIDENT_STATUS) {
           setAlertMessage(`Dia ${day.day} estourei!`);
           setAlertOpen(true);
           window.setTimeout(() => {
@@ -77,14 +140,15 @@ function App() {
           {days.map((day, index) => (
             <button
               key={day.day}
-              className={`calendar-day ${day.status === 'estourei' ? 'danger' : 'safe'}`}
+              className={`calendar-day ${day.status === INCIDENT_STATUS ? 'danger' : 'safe'} ${index === currentDayIndex ? 'current' : ''}`}
               onClick={() => toggleStatus(index)}
+              disabled={index !== days.length - 1}
               type="button"
             >
               <div className="day-number">{day.day}</div>
               <div className="day-status">
                 {day.status}
-                {day.status === 'estourei' ? (
+                {day.status === INCIDENT_STATUS ? (
                   <span className="day-icon" aria-label="Bonequinho gritando"><img src={memegrito} alt="Bonequinho gritando" /></span>
                 ) : null}
               </div>
@@ -92,7 +156,12 @@ function App() {
             </button>
           ))}
         </div>
-        <p className="calendar-note">Clique em um dia para marcar como "estourei" ou voltar para "sem estoura".</p>
+       <div className="calendar-actions">
+         <button type="button" className="advance-button" onClick={advanceDay}>
+           Avançar para o dia {days.length + 1}
+         </button>
+         <p className="calendar-note">Clique no dia atual para marcar como acidente ou sem acidente. Em seguida, avance para registrar o próximo dia.</p>
+       </div>
       </div>
 
      <div className="card">

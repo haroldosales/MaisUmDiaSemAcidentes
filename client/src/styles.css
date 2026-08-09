@@ -129,6 +129,33 @@ h1 {
   font-size: 0.95rem;
 }
 
+.calendar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.advance-button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.8rem 1.2rem;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.advance-button:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.calendar-day.current {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
+}
+
 @media (max-width: 900px) {
   .app {
     padding: 2rem 1rem;
