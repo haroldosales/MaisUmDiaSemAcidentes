@@ -1,11 +1,31 @@
 import { useEffect, useState } from 'react';
+import memegrito from './memegrito.jpg';
 
+const SAFE_STATUS = 'sem estoura';
+const INCIDENT_STATUS = 'estourei';
 const initialPeople = ['Lucas', 'Ana', 'Rafael', 'Carla', 'Marina', 'Gustavo'];
 const initialDays = Array.from({ length: 30 }, (_, index) => ({
   day: index + 1,
   status: 'sem estoura',
   people: [initialPeople[index % initialPeople.length], initialPeople[(index + 1) % initialPeople.length]],
 }));
+
+function loadStoredDays() {
+  try {
+    const storedDays = JSON.parse(window.localStorage.getItem('mais-um-dia-status'));
+    return Array.isArray(storedDays) && storedDays.length > 0 ? storedDays : initialDays;
+  } catch {
+    return initialDays;
+  }
+}
+
+async function fetchJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`API respondeu ${response.status} em ${url}`);
+  }
+  return response.json();
+}
 
 function App() {
   const [tips, setTips] = useState([]);
@@ -20,7 +40,6 @@ function App() {
   function advanceDay() {
     setDays((currentDays) => {
       const nextIndex = currentDays.length;
-      const previousDay = currentDays[currentDays.length - 1] ?? { status: SAFE_STATUS };
 
       return [
         ...currentDays,
@@ -37,20 +56,17 @@ function App() {
   }
 
   useEffect(() => {
-    fetch('/api/health')
-      .then((res) => res.json())
+    fetchJson('/api/health')
       .then((data) => {
         setStatus(data.message);
-        return fetch('/api/tips');
+        return fetchJson('/api/tips');
       })
-      .then((res) => res.json())
       .then((data) => setTips(data.tips))
-      .catch(() => setStatus('API indisponível'));
+      .catch((error) => setStatus(`API indisponível: ${error.message}`));
 
-    fetch('/api/front')
-      .then((res) => res.json())
+    fetchJson('/api/front')
       .then((data) => setFrontStatus(data.message))
-      .catch(() => setFrontStatus('Front não conectado'));
+      .catch((error) => setFrontStatus(`Front não conectado: ${error.message}`));
   }, []);
 
   useEffect(() => {
